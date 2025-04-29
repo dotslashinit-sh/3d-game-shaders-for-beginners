@@ -1,0 +1,36 @@
+{
+    "tasks": [
+        {
+            "label": "Build",
+            "dependsOrder": "parallel",
+            "dependsOn": ["Build executable", "Copy shaders"]
+        },
+        {
+            "label":  "Build executable",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", ".", "--config", "Release"],
+            "options": {
+                "cwd": "${workspaceFolder}/build",
+            },
+            "dependsOn": ["Configure CMake"]
+        },
+        {
+            "label": "Configure CMake",
+            "type": "shell",
+            "command": "cmake ./build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Copy shaders",
+            "type": "shell",
+            "command": "cp -Recurse -Force ./shaders ./build/Release/",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
