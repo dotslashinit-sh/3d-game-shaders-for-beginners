@@ -2,33 +2,15 @@
     "tasks": [
         {
             "label": "Build",
-            "dependsOrder": "sequence",
-            "dependsOn": ["Build executable", "Copy shaders"]
+            "dependsOn": ["Build executable"]
         },
         {
             "label":  "Build executable",
             "type": "shell",
-            "command": "cmake",
-            "args": ["--build", ".", "--config", "Release"],
+            "command": "pwsh",
+            "args": ["build-for-windows.ps1"],
             "options": {
-                "cwd": "${workspaceFolder}/build",
-            },
-            "dependsOn": ["Configure CMake"]
-        },
-        {
-            "label": "Configure CMake",
-            "type": "shell",
-            "command": "cmake .",
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            }
-        },
-        {
-            "label": "Copy shaders",
-            "type": "shell",
-            "command": "cp -Recurse -Force ./shaders ./build/Release/",
-            "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             }
         }
     ],
