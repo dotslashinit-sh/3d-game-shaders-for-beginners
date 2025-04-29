@@ -2,7 +2,7 @@
     "tasks": [
         {
             "label": "Build",
-            "dependsOrder": "parallel",
+            "dependsOrder": "sequence",
             "dependsOn": ["Build executable", "Copy shaders"]
         },
         {
@@ -18,9 +18,9 @@
         {
             "label": "Configure CMake",
             "type": "shell",
-            "command": "cmake ./build",
+            "command": "cmake .",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/build"
             }
         },
         {

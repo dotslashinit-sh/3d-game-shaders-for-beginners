@@ -19,3 +19,4 @@ list(APPEND LIBRARIES
 target_link_directories(3d-game-shaders PRIVATE "${PandaPath}/lib")
 target_include_directories(3d-game-shaders PRIVATE "${PandaPath}/include")
 target_link_libraries(3d-game-shaders PRIVATE ${LIBRARIES})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
