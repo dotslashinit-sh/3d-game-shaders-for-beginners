@@ -1,4 +1,4 @@
-function buildExe() {
+function BuildExe() {
     # Configure CMake
     cmake . -B build
     # Build the file in release mode
@@ -10,12 +10,42 @@ function buildExe() {
     return $result
 }
 
-function copyExe() {
+function CopyExe() {
     # Copies the exe file to the workspace root
-    Copy-Item ./build/Release/3d-game-shaders.exe ./
+    Copy-Item "./build/Release/3d-game-shaders.exe" "./"
 }
 
-$firstTime = 1
+$changeCache = (Test-Path "build/cache.json") ? (Get-Content "build/cache.json" | ConvertFrom-Json -AsHashTable) : @{}
+
+function GetFileHash {
+    param(
+        $file
+    )
+    return (Get-FileHash "$file" -Algorithm SHA256).Hash
+}
+
+function SetFileHash {
+    param (
+        $file
+    )
+    $changeCache["$file"] = GetFileHash($file)
+}
+
+function CheckDiff {
+    param ($file)
+    return ((GetFileHash($file)) -eq ($changeCache["$file"]))
+}
+
+function MakeCache {
+    if(Test-Path "build/cache.json") {
+        Clear-Content "build/cache.json"
+    }
+    SetFileHash("CMakeLists.txt")
+    SetFileHash("src/main.cxx")
+    Set-Content -Path "build/cache.json" -Value ($changeCache | ConvertTo-Json)
+}
+
+$firstTime = 0
 
 # Create a build directory
 if(-not(Test-Path ./build)) {
@@ -24,11 +54,12 @@ if(-not(Test-Path ./build)) {
 }
 
 # If CMakeLists.txt or main.cxx is changed, rebuild the executable and copy it to the root directory
-if($firstTime -or -not(git diff --quiet CMakeLists.txt src/main.cxx)) {
+if($firstTime -or -not(CheckDiff("src/main.cxx") -and CheckDiff("CMakeLists.txt"))) {
     Write-Output "Building exe file..."
     if(buildExe -eq 0) {
         Write-Output "Copying exe file..."
         copyExe
+        MakeCache
     }
-    Write-Output "Build completed successfully!"
+    Write-Output "Build script finished executing!"
 }
